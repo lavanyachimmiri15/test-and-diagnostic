@@ -161,10 +161,11 @@ BOOL SelfHeal_SetParamBoolValue
         }
         else 
         {
-	        syscfg_get( NULL, "SelfHealCronEnable", buf, sizeof(buf));
+	        int ret = syscfg_get( NULL, "SelfHealCronEnable", buf, sizeof(buf));
             CcspTraceInfo(("SelfHealCronEnable value is %s\n", buf));
-            if( strcmp(buf, "true") != 0)
+            if (ret != 0 || (strcmp(buf, "true") != 0))
 	        {
+                manage_self_heal_cron_state(FALSE);
                 CcspTraceInfo(("%s : SelfHealCronEnable is disabled, running as background process\n", __FUNCTION__));
                 if ( bValue == TRUE )
                 {
@@ -181,11 +182,11 @@ BOOL SelfHeal_SetParamBoolValue
             {
                 if ( bValue == TRUE )
                 {
-			        manage_self_heal_cron_state(true);
+			        manage_self_heal_cron_state(TRUE);
 	            }
                 else
 	            {
-			        manage_self_heal_cron_state(false);
+			        manage_self_heal_cron_state(FALSE);
 	            }
 
             }

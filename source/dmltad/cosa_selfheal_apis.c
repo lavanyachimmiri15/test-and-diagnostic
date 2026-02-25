@@ -569,13 +569,12 @@ CosaDmlGetSelfHealCfg(
             v_secure_system("/lib/rdk/xf3_wifi_self_heal.sh &");
 #endif
 	        buf[0]='\0';
-            syscfg_get( NULL, "SelfHealCronEnable", buf, sizeof(buf));
-            CcspTraceInfo(("SelfHealCronEnable value is %s\n", buf));
-            if( strcmp(buf, "false") == 0 )
+            int ret = syscfg_get( NULL, "SelfHealCronEnable", buf, sizeof(buf));
+            if (ret != 0 || (strcmp(buf, "true") != 0)) 
             {
-		        CcspTraceInfo(("SelfHealCronEnable is disabled, running as background process\n"));
-		        start_self_heal_scripts();
-	        }
+                CcspTraceInfo(("SelfHealCronEnable is not 'true' (value: '%s'). Starting background scripts.\n", buf));
+                start_self_heal_scripts();
+            }
 	}  
 
 	rc = memset_s(buf,sizeof(buf),0,sizeof(buf));
